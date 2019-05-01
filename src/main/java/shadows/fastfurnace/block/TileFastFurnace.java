@@ -18,6 +18,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ItemStackHolder;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
 
+import shadows.fastfurnace.Config;
+
 public class TileFastFurnace extends TileEntityFurnace {
 
 	public static final int INPUT = 0;
@@ -70,7 +72,7 @@ public class TileFastFurnace extends TileEntityFurnace {
 			if (canSmelt) smelt();
 			else cookTime = 0;
 		}
-		
+
 		if (!this.isBurning()) {
 			if (!(fuel = furnaceItemStacks.get(FUEL)).isEmpty()) {
 				if (canSmelt()) burnFuel(fuel, wasBurning);
@@ -125,7 +127,7 @@ public class TileFastFurnace extends TileEntityFurnace {
 			}
 		}
 
-		return !recipeOutput.isEmpty() && (output.isEmpty() || (ItemHandlerHelper.canItemStacksStack(recipeOutput, output) && (recipeOutput.getCount() + output.getCount() <= output.getMaxStackSize())));
+		return !recipeOutput.isEmpty() && (output.isEmpty() || ((Config.usingLenientOutputMatching() ? output.isItemEqual(recipeOutput): ItemHandlerHelper.canItemStacksStack(recipeOutput, output)) && (recipeOutput.getCount() + output.getCount() <= output.getMaxStackSize())));
 	}
 
 	@Override

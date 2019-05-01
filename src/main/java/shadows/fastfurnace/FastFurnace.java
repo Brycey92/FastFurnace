@@ -1,5 +1,7 @@
 package shadows.fastfurnace;
 
+import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,6 +22,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import shadows.fastfurnace.block.BlockFastFurnace;
 import shadows.fastfurnace.block.TileFastFurnace;
 
+import java.util.Map;
+
 @Mod(modid = FastFurnace.MODID, name = FastFurnace.MODNAME, version = FastFurnace.VERSION)
 public class FastFurnace {
 
@@ -33,6 +37,7 @@ public class FastFurnace {
 	public void preInit(FMLPreInitializationEvent e) {
 		MinecraftForge.EVENT_BUS.register(this);
 		GameRegistry.registerTileEntity(TileFastFurnace.class, new ResourceLocation("minecraft", "furnace"));
+		Config.init(e);
 	}
 
 	@SubscribeEvent
@@ -55,9 +60,17 @@ public class FastFurnace {
 		}
 	}
 
+	@EventHandler
+	public void postInit(FMLPostInitializationEvent e) {
+		if(Config.shouldReconstructFurnaceRecipeOutputs()) {
+			for (Map.Entry<ItemStack, ItemStack> entry : FurnaceRecipes.instance().getSmeltingList().entrySet()) {
+				entry.setValue(entry.getValue().copy());
+			}
+		}
+	}
+
 	static boolean shouldRun() {
 		boolean bwm = Loader.isModLoaded("betterwithmods");
 		return !bwm || bwm && !BWMCompat.isBWMFurnaceEnabled();
 	}
-
 }
