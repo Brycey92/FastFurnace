@@ -1,5 +1,6 @@
 package shadows.fastfurnace;
 
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,6 +30,8 @@ public class FastFurnace {
 
 	public static final Logger LOG = LogManager.getLogger(MODID);
 
+	private static boolean customNPCsLoaded = false;
+
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent e) {
 		MinecraftForge.EVENT_BUS.register(this);
@@ -55,9 +58,18 @@ public class FastFurnace {
 		}
 	}
 
+	@EventHandler
+	public void postInit(FMLPostInitializationEvent e) {
+		customNPCsLoaded = Loader.isModLoaded("customnpcs");
+	}
+
 	static boolean shouldRun() {
 		boolean bwm = Loader.isModLoaded("betterwithmods");
 		return !bwm || bwm && !BWMCompat.isBWMFurnaceEnabled();
+	}
+
+	public static boolean isCustomNPCsLoaded() {
+		return customNPCsLoaded;
 	}
 
 }
